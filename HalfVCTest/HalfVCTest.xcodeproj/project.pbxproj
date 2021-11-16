@@ -16,9 +16,13 @@
 		C212C23C26672412004DB6EA /* HalfViewWithKeyboardTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C212C23B26672412004DB6EA /* HalfViewWithKeyboardTransitionAnimator.swift */; };
 		C212C23E26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C212C23D26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift */; };
 		C212C307266D1308004DB6EA /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C212C306266D1307004DB6EA /* CustomCollectionViewCell.swift */; };
+		D679E2E89BDE0203B0C3EF9D /* Pods_HalfVCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9079BBCAA2A330C9F00A82 /* Pods_HalfVCTest.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3E4FEBCD08445C9AA3C2DD8D /* Pods-HalfVCTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HalfVCTest.debug.xcconfig"; path = "Target Support Files/Pods-HalfVCTest/Pods-HalfVCTest.debug.xcconfig"; sourceTree = "<group>"; };
+		8D2E64873533451986FE97FA /* Pods-HalfVCTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HalfVCTest.release.xcconfig"; path = "Target Support Files/Pods-HalfVCTest/Pods-HalfVCTest.release.xcconfig"; sourceTree = "<group>"; };
+		AA9079BBCAA2A330C9F00A82 /* Pods_HalfVCTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HalfVCTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C212C224266723E3004DB6EA /* HalfVCTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HalfVCTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C212C227266723E3004DB6EA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C212C229266723E3004DB6EA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -37,17 +41,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D679E2E89BDE0203B0C3EF9D /* Pods_HalfVCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		90F5651CAB3DCEBB23FF0EEF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3E4FEBCD08445C9AA3C2DD8D /* Pods-HalfVCTest.debug.xcconfig */,
+				8D2E64873533451986FE97FA /* Pods-HalfVCTest.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		BA89664198D120B4390C604D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA9079BBCAA2A330C9F00A82 /* Pods_HalfVCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C212C21B266723E3004DB6EA = {
 			isa = PBXGroup;
 			children = (
 				C212C226266723E3004DB6EA /* HalfVCTest */,
 				C212C225266723E3004DB6EA /* Products */,
+				90F5651CAB3DCEBB23FF0EEF /* Pods */,
+				BA89664198D120B4390C604D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -91,9 +116,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C212C238266723E4004DB6EA /* Build configuration list for PBXNativeTarget "HalfVCTest" */;
 			buildPhases = (
+				EA43AC44CCA28C3AB9360E04 /* [CP] Check Pods Manifest.lock */,
 				C212C220266723E3004DB6EA /* Sources */,
 				C212C221266723E3004DB6EA /* Frameworks */,
 				C212C222266723E3004DB6EA /* Resources */,
+				A1736F4D89FD629152F8E54A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -148,6 +175,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1736F4D89FD629152F8E54A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-HalfVCTest/Pods-HalfVCTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-HalfVCTest/Pods-HalfVCTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HalfVCTest/Pods-HalfVCTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EA43AC44CCA28C3AB9360E04 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-HalfVCTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C212C220266723E3004DB6EA /* Sources */ = {
@@ -303,6 +372,7 @@
 		};
 		C212C239266723E4004DB6EA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3E4FEBCD08445C9AA3C2DD8D /* Pods-HalfVCTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -322,6 +392,7 @@
 		};
 		C212C23A266723E4004DB6EA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D2E64873533451986FE97FA /* Pods-HalfVCTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
