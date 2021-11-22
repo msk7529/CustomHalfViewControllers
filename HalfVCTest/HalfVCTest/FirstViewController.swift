@@ -9,8 +9,8 @@ import UIKit
 
 class FirstViewController: UIViewController {
 
-    private lazy var halfViewWithKeyboardTransitionDelegate: HalfViewWithKeyboardTransitionDelegate = {
-        return .init()
+    private lazy var modalWithKeyboardTransitionDelegate: ModalWithKeyboardTransitionDelegate = {
+        return .init(heightInPortrait: 198.5, heightInLandScape: 198.5)
     }()
     
     private lazy var button1: UIButton = {
@@ -67,7 +67,7 @@ class FirstViewController: UIViewController {
         changeLayout()
         
         let nextVC: HalfViewWithKeyboardViewController = .init()
-        nextVC.transitioningDelegate = self.halfViewWithKeyboardTransitionDelegate
+        nextVC.transitioningDelegate = self.modalWithKeyboardTransitionDelegate
         nextVC.delegate = self
         nextVC.modalPresentationStyle = .custom
         present(nextVC, animated: true, completion: nil)

@@ -7,21 +7,31 @@
 import UIKit
 
 
-final class HalfViewWithKeyboardTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
+final class ModalWithKeyboardTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
+    // 뷰컨이 present됨과 동시에 키보드가 노출되어야 하는 화면(텍스트뷰 또는 텍스트필드가 존재)에서 사용한다.
+    
+    private let heightInPortrait: CGFloat   // 키보드를 제외한 뷰컨의 높이(세로모드)
+    private let heightInLandScape: CGFloat  // 키보드를 제외한 뷰컨의 높이(가로모드)
+    
+    init(heightInPortrait: CGFloat, heightInLandScape: CGFloat) {
+        self.heightInPortrait = heightInPortrait
+        self.heightInLandScape = heightInLandScape
+    }
+    
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return HalfViewWithKeyboardPresentationController(presentedViewController: presented, presenting: presenting)
+        return ModalWithKeyboardPresentationController(presentedViewController: presented, presenting: presenting, heightInPortrait: heightInPortrait, heightInLandScape: heightInLandScape)
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return HalfViewWithKeyboardTransitionAnimator(isPresent: true)
+        return ModalWithKeyboardTransitionAnimator(isPresent: true)
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return HalfViewWithKeyboardTransitionAnimator(isPresent: false)
+        return ModalWithKeyboardTransitionAnimator(isPresent: false)
     }
 }
 
-final class HalfViewWithKeyboardPresentationController: UIPresentationController {
+final class ModalWithKeyboardPresentationController: UIPresentationController {
     private let dimmedView: UIView = {
         let view: UIView = .init()
         view.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
@@ -38,8 +48,8 @@ final class HalfViewWithKeyboardPresentationController: UIPresentationController
     }
     
     private var keyboardHeight: CGFloat {
-        if let halfVC = presentedViewController as? HalfViewWithKeyboardViewController {
-            return interfaceOrientation == .portrait ? halfVC.keyboardHeightOnPortrait : halfVC.keyboardHeightOnLandscape
+        if let vc = presentedViewController as? (UIViewController & ModalWithKeyboardPresentable) {
+            return interfaceOrientation == .portrait ? vc.keyboardHeightOnPortrait : vc.keyboardHeightOnLandscape
         }
         return 0
     }
@@ -50,18 +60,23 @@ final class HalfViewWithKeyboardPresentationController: UIPresentationController
         var frame: CGRect = .zero
         frame.size = size(forChildContentContainer: presentedViewController, withParentContainerSize: containerView.bounds.size)
         if interfaceOrientation != .portrait {
-            //frame.origin.x = 40
+            //가로모드에서 양옆의 여백을 주고싶으면 여기에 코드를 추가한다.(ex: frame.origin.x = 40)
         }
         frame.origin.y = containerView.frame.height - frame.size.height
         return frame
     }
+    
+    private let heightInPortrait: CGFloat       // 키보드를 제외한 뷰컨의 높이(세로모드)
+    private let heightInLandScape: CGFloat      // 키보드를 제외한 뷰컨의 높이(가로모드)
+    
+    init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?, heightInPortrait: CGFloat, heightInLandScape: CGFloat) {
+        self.heightInPortrait = heightInPortrait
+        self.heightInLandScape = heightInLandScape
         
-    override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
         
         let recognizer: UITapGestureRecognizer = .init(target: self, action: #selector(dismissPresentingVC))
         dimmedView.addGestureRecognizer(recognizer)
-        
     }
     
     override func presentationTransitionWillBegin() {
@@ -102,9 +117,9 @@ final class HalfViewWithKeyboardPresentationController: UIPresentationController
     
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
         if interfaceOrientation == .portrait {
-            return CGSize(width: parentSize.width, height: 198.5 + keyboardHeight)
+            return CGSize(width: parentSize.width, height: heightInPortrait + keyboardHeight)
         } else {
-            return CGSize(width: parentSize.width, height: 198.5 + keyboardHeight)
+            return CGSize(width: parentSize.width, height: heightInLandScape + keyboardHeight)
         }
     }
     
@@ -113,7 +128,7 @@ final class HalfViewWithKeyboardPresentationController: UIPresentationController
     }
 }
 
-final class HalfViewWithKeyboardTransitionAnimator: NSObject {
+final class ModalWithKeyboardTransitionAnimator: NSObject {
     var isPresent: Bool
     
     init(isPresent: Bool) {
@@ -122,9 +137,9 @@ final class HalfViewWithKeyboardTransitionAnimator: NSObject {
     }
 }
 
-extension HalfViewWithKeyboardTransitionAnimator: UIViewControllerAnimatedTransitioning {
+extension ModalWithKeyboardTransitionAnimator: UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.3
+        return 0.3  // 이 값은 사용되지 않는다.
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -132,7 +147,7 @@ extension HalfViewWithKeyboardTransitionAnimator: UIViewControllerAnimatedTransi
 
         guard let controller = transitionContext.viewController(forKey: key) else { return}
 
-        let keyboardAnimationDuration = max(((controller as? HalfViewWithKeyboardViewController)?.keyboardAnimationDuration ?? 0.4) - 0.1, 0.2)   // 키보드 애니메이션과 VC present 애니메이션이 최대한 자연스럽도록 조정
+        let keyboardAnimationDuration = max(((controller as? ModalWithKeyboardPresentable)?.keyboardAnimationDuration ?? 0.4) - 0.1, 0.2)   // 키보드 애니메이션과 VC present 애니메이션이 최대한 자연스럽도록 조정
         
         if isPresent {
             transitionContext.containerView.addSubview(controller.view)

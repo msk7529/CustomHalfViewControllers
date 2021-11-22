@@ -56,28 +56,23 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         return .allButUpsideDown
     }
     
-    override var interfaceOrientation: UIInterfaceOrientation  {
-        if let orientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation {
-            return orientation
-        }
-        return .portrait
-    }
-    
     override var shouldAutorotate: Bool {
         // 팬제스처 동작중 회전 방지 처리
         return isPanGestureActivated ? false : true
     }
     
     private var titleLengthPublisher: CurrentValueSubject<Int, Never> = .init(0)
-    var keyboardHeightOnPortrait: CGFloat = 0
-    var keyboardHeightOnLandscape: CGFloat = 0
-    var keyboardAnimationDuration: Double = 0.4
-    private var cancellables: Set<AnyCancellable> = .init()
     private let maxTitleLength: Int = 30
     
     // panGesture
     private var isPanGestureActivated: Bool = false
     private var originY: CGFloat = 0
+    
+    // ModalWithKeyboardPresentable
+    var keyboardHeightOnPortrait: CGFloat = 0
+    var keyboardHeightOnLandscape: CGFloat = 0
+    var keyboardAnimationDuration: Double = 0.4
+    var cancellables: Set<AnyCancellable> = .init()
     
     weak var delegate: HalfViewWithKeyboardViewControllerDelegate?
     
@@ -107,21 +102,7 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         textLengthLabel.topAnchor.constraint(equalTo: textFieldBottomLine.bottomAnchor, constant: 3).isActive = true
         textLengthLabel.trailingAnchor.constraint(equalTo: textFieldBottomLine.trailingAnchor).isActive = true
         
-        NotificationCenter.default
-            .publisher(for: UIResponder.keyboardWillShowNotification, object: nil)
-            .sink { [weak self] noti in
-                guard let `self` = self, let userInfo = noti.userInfo,
-                      let keyboardHeight = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height,
-                      let keyboardAnimationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
-                          return
-                      }
-                if self.interfaceOrientation == .portrait {
-                    self.keyboardHeightOnPortrait = keyboardHeight
-                } else {
-                    self.keyboardHeightOnLandscape = keyboardHeight
-                }
-                self.keyboardAnimationDuration = keyboardAnimationDuration
-            }.store(in: &cancellables)
+        addKeyboardNotification()
         
         titleLengthPublisher
             .sink { [weak self] length in
@@ -186,3 +167,5 @@ extension HalfViewWithKeyboardViewController: UITextFieldDelegate {
         return newLength <= maxTitleLength
     }
 }
+
+extension HalfViewWithKeyboardViewController: ModalWithKeyboardPresentable { }

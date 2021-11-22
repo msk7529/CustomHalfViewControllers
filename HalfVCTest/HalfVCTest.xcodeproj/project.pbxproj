@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,6 +16,7 @@
 		C212C23C26672412004DB6EA /* HalfViewWithKeyboardTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C212C23B26672412004DB6EA /* HalfViewWithKeyboardTransitionAnimator.swift */; };
 		C212C23E26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C212C23D26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift */; };
 		C212C307266D1308004DB6EA /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C212C306266D1307004DB6EA /* CustomCollectionViewCell.swift */; };
+		C267BA5E274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C267BA5D274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift */; };
 		D679E2E89BDE0203B0C3EF9D /* Pods_HalfVCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9079BBCAA2A330C9F00A82 /* Pods_HalfVCTest.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,7 @@
 		C212C23B26672412004DB6EA /* HalfViewWithKeyboardTransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfViewWithKeyboardTransitionAnimator.swift; sourceTree = "<group>"; };
 		C212C23D26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfViewWithKeyboardViewController.swift; sourceTree = "<group>"; };
 		C212C306266D1307004DB6EA /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
+		C267BA5D274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalWithKeyboardPresentable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +56,6 @@
 				3E4FEBCD08445C9AA3C2DD8D /* Pods-HalfVCTest.debug.xcconfig */,
 				8D2E64873533451986FE97FA /* Pods-HalfVCTest.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -105,6 +106,7 @@
 			children = (
 				C212C23D26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift */,
 				C212C23B26672412004DB6EA /* HalfViewWithKeyboardTransitionAnimator.swift */,
+				C267BA5D274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift */,
 			);
 			path = HalfViewWithTextField;
 			sourceTree = "<group>";
@@ -229,6 +231,7 @@
 				C212C228266723E3004DB6EA /* AppDelegate.swift in Sources */,
 				C212C23E26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift in Sources */,
 				C212C22A266723E3004DB6EA /* SceneDelegate.swift in Sources */,
+				C267BA5E274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
