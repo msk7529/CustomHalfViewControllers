@@ -65,8 +65,8 @@ final class HalfViewWithKeyboardViewController: UIViewController {
     private let maxTitleLength: Int = 30
     
     // panGesture
-    private var isPanGestureActivated: Bool = false
-    private var originY: CGFloat = 0
+    var isPanGestureActivated: Bool = false
+    var originY: CGFloat = 0
     
     // ModalWithKeyboardPresentable
     var keyboardHeightOnPortrait: CGFloat = 0
@@ -110,45 +110,11 @@ final class HalfViewWithKeyboardViewController: UIViewController {
                 self.textLengthLabel.text = "\(length)/\(self.maxTitleLength)"
             }.store(in: &cancellables)
         
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPanGesture(_:))))
+        addPanGesture()
     }
     
     override func viewWillLayoutSubviews() {
         self.view.add(roundedCorners: [.topLeft, .topRight], with: CGSize(width: 12, height: 12))
-    }
-    
-    @objc
-    private func didPanGesture(_ sender: UIPanGestureRecognizer) {
-        let viewTranslation = sender.translation(in: view)
- 
-        switch sender.state {
-        case .began:
-            originY = view.frame.origin.y
-            isPanGestureActivated = true
-        case .changed:
-            let newOriginY = viewTranslation.y + originY
-            if originY < newOriginY {
-                // 위쪽으로의 팬제스처는 막는다.
-                view.frame.origin.y = max(originY, viewTranslation.y + originY)
-            }
-            if originY + 120 <= newOriginY {
-                // 특정시점을 기준으로 키보드를 내린다.
-                textField.resignFirstResponder()
-            }
-        case .ended:
-            isPanGestureActivated = false
-            
-            if originY..<originY + 120 ~= view.frame.origin.y {
-                UIView.animate(withDuration: keyboardAnimationDuration) {
-                    self.view.frame.origin.y = self.originY
-                    self.textField.becomeFirstResponder()
-                }
-            } else {
-                dismiss(animated: true, completion: nil)
-            }
-        default:
-            break
-        }
     }
         
     @objc private func buttonDidTap() {
@@ -168,4 +134,12 @@ extension HalfViewWithKeyboardViewController: UITextFieldDelegate {
     }
 }
 
-extension HalfViewWithKeyboardViewController: ModalWithKeyboardPresentable { }
+extension HalfViewWithKeyboardViewController: ModalWithKeyboardPresentable {
+    var isPanGestureEnable: Bool {
+        return true
+    }
+    
+    var keyboardDisAppearPosY: CGFloat {
+        return 120
+    }
+}
