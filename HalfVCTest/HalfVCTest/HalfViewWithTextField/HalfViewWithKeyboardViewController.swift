@@ -72,9 +72,15 @@ final class HalfViewWithKeyboardViewController: UIViewController {
     var keyboardHeightOnPortrait: CGFloat = 0
     var keyboardHeightOnLandscape: CGFloat = 0
     var keyboardAnimationDuration: Double = 0.4
+    var keyboardObserver: NSObjectProtocol?
+    
     var cancellables: Set<AnyCancellable> = .init()
     
     weak var delegate: HalfViewWithKeyboardViewControllerDelegate?
+    
+    deinit {
+        removeKeyboardObserver()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,7 +108,7 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         textLengthLabel.topAnchor.constraint(equalTo: textFieldBottomLine.bottomAnchor, constant: 3).isActive = true
         textLengthLabel.trailingAnchor.constraint(equalTo: textFieldBottomLine.trailingAnchor).isActive = true
         
-        addKeyboardNotification()
+        addKeyboardObserver()
         
         titleLengthPublisher
             .sink { [weak self] length in
@@ -142,4 +148,48 @@ extension HalfViewWithKeyboardViewController: ModalWithKeyboardPresentable {
     var keyboardDisAppearPosY: CGFloat {
         return 120
     }
+    
+    var heightInPortrait: CGFloat {
+        return 198.5
+    }
+    
+    var heightInLandScape: CGFloat {
+        return 198.5
+    }
+    
+    /*
+    @objc override func didPanGesture(_ sender: UIPanGestureRecognizer) {
+        // 별도의 작업이 필요한 경우 뷰컨에서 override 한다.
+        let viewTranslation = sender.translation(in: view)
+ 
+        switch sender.state {
+        case .began:
+            self.originY = view.frame.origin.y
+            self.isPanGestureActivated = true
+        case .changed:
+            let newOriginY = viewTranslation.y + self.originY
+            if self.originY < newOriginY {
+                // 위쪽으로의 팬제스처는 막는다.
+                view.frame.origin.y = max(self.originY, viewTranslation.y + self.originY)
+            }
+            if self.originY + self.keyboardDisAppearPosY <= newOriginY {
+                // 특정시점을 기준으로 키보드를 내린다.
+                self.textField.resignFirstResponder()
+            }
+        case .ended:
+            self.isPanGestureActivated = false
+            
+            if self.originY..<self.originY + self.keyboardDisAppearPosY ~= view.frame.origin.y {
+                UIView.animate(withDuration: self.keyboardAnimationDuration) {
+                    self.view.frame.origin.y = self.originY
+                    self.textField.becomeFirstResponder()
+                }
+            } else {
+                dismiss(animated: true, completion: nil)
+            }
+        default:
+            break
+        }
+    }
+    */
 }

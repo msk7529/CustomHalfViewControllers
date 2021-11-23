@@ -10,16 +10,12 @@ import UIKit
 final class ModalWithKeyboardTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
     // 뷰컨이 present됨과 동시에 키보드가 노출되어야 하는 화면(텍스트뷰 또는 텍스트필드가 존재)에서 사용한다.
     
-    private let heightInPortrait: CGFloat   // 키보드를 제외한 뷰컨의 높이(세로모드)
-    private let heightInLandScape: CGFloat  // 키보드를 제외한 뷰컨의 높이(가로모드)
-    
-    init(heightInPortrait: CGFloat, heightInLandScape: CGFloat) {
-        self.heightInPortrait = heightInPortrait
-        self.heightInLandScape = heightInLandScape
-    }
+    public static var `default`: ModalWithKeyboardTransitionDelegate = {
+        return ModalWithKeyboardTransitionDelegate()
+    }()
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return ModalWithKeyboardPresentationController(presentedViewController: presented, presenting: presenting, heightInPortrait: heightInPortrait, heightInLandScape: heightInLandScape)
+        return ModalWithKeyboardPresentationController(presentedViewController: presented, presenting: presenting)
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -48,10 +44,24 @@ final class ModalWithKeyboardPresentationController: UIPresentationController {
     }
     
     private var keyboardHeight: CGFloat {
-        if let vc = presentedViewController as? (UIViewController & ModalWithKeyboardPresentable) {
-            return interfaceOrientation == .portrait ? vc.keyboardHeightOnPortrait : vc.keyboardHeightOnLandscape
+        guard let vc = presentedViewController as? (UIViewController & ModalWithKeyboardPresentable) else {
+            return 0
         }
-        return 0
+        return interfaceOrientation == .portrait ? vc.keyboardHeightOnPortrait : vc.keyboardHeightOnLandscape
+    }
+    
+    private var heightInPortrait: CGFloat {
+        guard let vc = presentedViewController as? (UIViewController & ModalWithKeyboardPresentable) else {
+            return 0
+        }
+        return vc.heightInPortrait
+    }
+    
+    private var heightInLandScape: CGFloat {
+        guard let vc = presentedViewController as? (UIViewController & ModalWithKeyboardPresentable) else {
+            return 0
+        }
+        return vc.heightInLandScape
     }
     
     override var frameOfPresentedViewInContainerView: CGRect {
@@ -66,13 +76,7 @@ final class ModalWithKeyboardPresentationController: UIPresentationController {
         return frame
     }
     
-    private let heightInPortrait: CGFloat       // 키보드를 제외한 뷰컨의 높이(세로모드)
-    private let heightInLandScape: CGFloat      // 키보드를 제외한 뷰컨의 높이(가로모드)
-    
-    init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?, heightInPortrait: CGFloat, heightInLandScape: CGFloat) {
-        self.heightInPortrait = heightInPortrait
-        self.heightInLandScape = heightInLandScape
-        
+    override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
         
         let recognizer: UITapGestureRecognizer = .init(target: self, action: #selector(dismissPresentingVC))
@@ -110,7 +114,7 @@ final class ModalWithKeyboardPresentationController: UIPresentationController {
         super.containerViewWillLayoutSubviews()
         
         presentedView.frame = frameOfPresentedViewInContainerView
-        //presentedView.add(roundedCorners: [.topLeft, .topRight], with: CGSize(width: 12, height: 12))
+        presentedView.add(roundedCorners: [.topLeft, .topRight], with: CGSize(width: 12, height: 12))
         dimmedView.frame = containerView.frame
     }
     

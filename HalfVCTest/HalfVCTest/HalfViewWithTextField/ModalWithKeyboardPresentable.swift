@@ -9,13 +9,20 @@ import Combine
 import UIKit
 
 public protocol ModalWithKeyboardPresentable: AnyObject {
-    var cancellables: Set<AnyCancellable> { get set }
+    typealias ObjectType = UIViewController & ModalWithKeyboardPresentable
+    
+    var heightInPortrait: CGFloat { get } // 키보드를 제외한 뷰컨의 높이(세로모드)
+    var heightInLandScape: CGFloat { get } // 키보드를 제외한 뷰컨의 높이(가로모드)
+    
     var orientation: UIInterfaceOrientation { get }
     var keyboardHeightOnPortrait: CGFloat { get set }
     var keyboardHeightOnLandscape: CGFloat { get set }
     var keyboardAnimationDuration: Double  { get set }
+    //var cancellables: Set<AnyCancellable> { get set }
+    var keyboardObserver: NSObjectProtocol? { get set }
     
-    func addKeyboardNotification()  // viewDidLaod에서 텍스트필드 또는 텍스트뷰 becomeFirstResponder 호출후, 호출해주어야 한다.
+    func addKeyboardObserver()      // viewDidLaod에서 텍스트필드 또는 텍스트뷰 becomeFirstResponder 호출후, 호출해주어야 한다.
+    func removeKeyboardObserver()   // 옵저버 제거
     
     /// 팬제스처 지원을 위한 프로퍼티, 메서드
     var isPanGestureEnable: Bool { get }
@@ -41,22 +48,51 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController {
         return 50
     }
     
-    func addKeyboardNotification() {
-        NotificationCenter.default
-            .publisher(for: UIResponder.keyboardWillShowNotification, object: nil)
-            .sink { [weak self] noti in
-                guard let `self` = self, let userInfo = noti.userInfo,
-                      let keyboardHeight = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height,
-                      let keyboardAnimationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
-                          return
-                      }
-                if self.orientation == .portrait {
-                    self.keyboardHeightOnPortrait = keyboardHeight
-                } else {
-                    self.keyboardHeightOnLandscape = keyboardHeight
-                }
-                self.keyboardAnimationDuration = keyboardAnimationDuration
-            }.store(in: &cancellables)
+    var heightInPortrait: CGFloat {
+        return 198.5
+    }
+    
+    var heightInLandScape: CGFloat {
+        return 198.5
+    }
+    
+//    func addKeyboardNotification() {
+//        NotificationCenter.default
+//            .publisher(for: UIResponder.keyboardWillShowNotification, object: nil)
+//            .sink { [weak self] noti in
+//                guard let `self` = self, let userInfo = noti.userInfo,
+//                      let keyboardHeight = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height,
+//                      let keyboardAnimationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
+//                          return
+//                      }
+//                if self.orientation == .portrait {
+//                    self.keyboardHeightOnPortrait = keyboardHeight
+//                } else {
+//                    self.keyboardHeightOnLandscape = keyboardHeight
+//                }
+//                self.keyboardAnimationDuration = keyboardAnimationDuration
+//            }.store(in: &cancellables)
+//    }
+    
+    func addKeyboardObserver() {
+        keyboardObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main, using: { [weak self] noti in
+            guard let `self` = self, let userInfo = noti.userInfo,
+                  let keyboardHeight = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height,
+                  let keyboardAnimationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
+                      return
+                  }
+            if self.orientation == .portrait {
+                self.keyboardHeightOnPortrait = keyboardHeight
+            } else {
+                self.keyboardHeightOnLandscape = keyboardHeight
+            }
+            self.keyboardAnimationDuration = keyboardAnimationDuration
+        })
+    }
+    
+    func removeKeyboardObserver() {
+        guard let observer = keyboardObserver else { return }
+        NotificationCenter.default.removeObserver(observer)
     }
     
     func addPanGesture() {
@@ -66,13 +102,13 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController {
     }
 }
 
-private extension UIViewController {
-    var textView: UIControl? {
-        return view.subviews.filter { $0 is UITextView || $0 is UITextField }.first as? UIControl
+public extension UIViewController {
+    private var textView: UIControl? {
+        return view.subviews.first(where: { $0 is UITextView || $0 is UITextField }) as? UIControl
     }
     
     @objc func didPanGesture(_ sender: UIPanGestureRecognizer) {
-        // 추가작업이 필요한 경우 뷰컨에서 구현해준다.
+        // 별도의 작업이 필요한 경우 뷰컨에서 override 한다.
         guard let self = self as? (UIViewController & ModalWithKeyboardPresentable), self.isPanGestureEnable else {
             return
         }

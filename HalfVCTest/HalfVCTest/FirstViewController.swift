@@ -9,10 +9,6 @@ import UIKit
 
 class FirstViewController: UIViewController {
 
-    private lazy var modalWithKeyboardTransitionDelegate: ModalWithKeyboardTransitionDelegate = {
-        return .init(heightInPortrait: 198.5, heightInLandScape: 198.5)
-    }()
-    
     private lazy var button1: UIButton = {
         let button: UIButton = .init(type: .system)
         button.backgroundColor = .systemTeal
@@ -66,11 +62,7 @@ class FirstViewController: UIViewController {
     @objc func didTapButton1() {
         changeLayout()
         
-        let nextVC: HalfViewWithKeyboardViewController = .init()
-        nextVC.transitioningDelegate = self.modalWithKeyboardTransitionDelegate
-        nextVC.delegate = self
-        nextVC.modalPresentationStyle = .custom
-        present(nextVC, animated: true, completion: nil)
+        presentModalWithKeyboard(HalfViewWithKeyboardViewController())
     }
 }
 
