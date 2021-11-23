@@ -18,6 +18,7 @@
 		C212C307266D1308004DB6EA /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C212C306266D1307004DB6EA /* CustomCollectionViewCell.swift */; };
 		C267BA5E274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C267BA5D274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift */; };
 		C267BAA8274C637C00D188E6 /* UIViewController+PresentModalWithKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C267BAA7274C637B00D188E6 /* UIViewController+PresentModalWithKeyboard.swift */; };
+		C267BAE1274CE28500D188E6 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C267BAE0274CE28300D188E6 /* TestViewController.swift */; };
 		D679E2E89BDE0203B0C3EF9D /* Pods_HalfVCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9079BBCAA2A330C9F00A82 /* Pods_HalfVCTest.framework */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		C212C306266D1307004DB6EA /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
 		C267BA5D274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalWithKeyboardPresentable.swift; sourceTree = "<group>"; };
 		C267BAA7274C637B00D188E6 /* UIViewController+PresentModalWithKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+PresentModalWithKeyboard.swift"; sourceTree = "<group>"; };
+		C267BAE0274CE28300D188E6 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 				C212C23B26672412004DB6EA /* HalfViewWithKeyboardTransitionAnimator.swift */,
 				C267BA5D274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift */,
 				C267BAA7274C637B00D188E6 /* UIViewController+PresentModalWithKeyboard.swift */,
+				C267BAE0274CE28300D188E6 /* TestViewController.swift */,
 			);
 			path = HalfViewWithTextField;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 				C212C23E26672D4F004DB6EA /* HalfViewWithKeyboardViewController.swift in Sources */,
 				C267BAA8274C637C00D188E6 /* UIViewController+PresentModalWithKeyboard.swift in Sources */,
 				C212C22A266723E3004DB6EA /* SceneDelegate.swift in Sources */,
+				C267BAE1274CE28500D188E6 /* TestViewController.swift in Sources */,
 				C267BA5E274BC8EC00D188E6 /* ModalWithKeyboardPresentable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
