@@ -27,6 +27,7 @@ public protocol ModalWithKeyboardPresentable: AnyObject {
     func removeKeyboardObserver()   // 옵저버 제거
     
     /// 팬제스처 지원을 위한 프로퍼티, 메서드
+    var containerViewOfScrollView: UIView? { get }
     var isPanGestureEnable: Bool { get }
     var originY: CGFloat { get set }
     var keyboardDisAppearPosY: CGFloat { get }      // 팬제스처 도중 키보드가 특정 시점을 기준으로 키보드를 내리고자 한다면 세팅한다.
@@ -34,7 +35,7 @@ public protocol ModalWithKeyboardPresentable: AnyObject {
     func addPanGesture()                            // 팬제스처 지원을 하고자 한다면 viewDidLoad에서 호출한다.
 }
 
-public extension ModalWithKeyboardPresentable where Self: UIViewController {
+public extension ModalWithKeyboardPresentable where Self: UIViewController, Self: UIGestureRecognizerDelegate {
     var orientation: UIInterfaceOrientation  {
         if let orientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation {
             return orientation
@@ -56,6 +57,10 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController {
     
     var heightInLandScape: CGFloat {
         return 198.5
+    }
+    
+    var containerViewOfScrollView: UIView? {
+        return nil
     }
     
 //    func addKeyboardNotification() {
@@ -109,14 +114,20 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController {
     
     func addPanGesture() {
         if isPanGestureEnable {
-            view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPanGesture(_:))))
+            let recognizer = UIPanGestureRecognizer(target: self, action: #selector(didPanGesture(_:)))
+            recognizer.delegate = self
+            view.addGestureRecognizer(recognizer)
         }
     }
 }
 
 public extension UIViewController {
-    private var textView: UIControl? {
-        return view.subviews.first(where: { $0 is UITextView || $0 is UITextField }) as? UIControl
+    private var textViewOrTextField: UIView? {
+        if let self = self as? (UIViewController & ModalWithKeyboardPresentable), let containerViewOfScrollView = self.containerViewOfScrollView {
+            return containerViewOfScrollView.subviews.first(where: { $0 is UITextView || $0 is UITextField })
+        } else {
+            return view.subviews.first(where: { $0 is UITextView || $0 is UITextField })
+        }
     }
     
     @objc func didPanGesture(_ sender: UIPanGestureRecognizer) {
@@ -139,7 +150,7 @@ public extension UIViewController {
             }
             if self.originY + self.keyboardDisAppearPosY <= newOriginY {
                 // 특정시점을 기준으로 키보드를 내린다.
-                self.textView?.resignFirstResponder()
+                self.textViewOrTextField?.resignFirstResponder()
             }
         case .ended:
             self.isPanGestureActivated = false
@@ -147,7 +158,7 @@ public extension UIViewController {
             if self.originY..<self.originY + self.keyboardDisAppearPosY ~= view.frame.origin.y {
                 UIView.animate(withDuration: self.keyboardAnimationDuration) {
                     self.view.frame.origin.y = self.originY
-                    self.textView?.becomeFirstResponder()
+                    self.textViewOrTextField?.becomeFirstResponder()
                 }
             } else {
                 dismiss(animated: true, completion: nil)

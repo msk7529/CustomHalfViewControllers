@@ -7,19 +7,28 @@
 
 import Combine
 import UIKit
+import SnapKit
 
 protocol HalfViewWithKeyboardViewControllerDelegate: AnyObject {
     func HalfVCButtonDidTap()
 }
 
 final class HalfViewWithKeyboardViewController: UIViewController {
-        
+    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView: UIScrollView = .init(frame: .zero)
+        scrollView.bounces = true
+        scrollView.delegate = self
+        return scrollView
+    }()
+    
+    private let containerView: UIView = .init(frame: .zero)
+    
     private let titleLabel: UILabel = {
         let label: UILabel = .init(frame: .zero)
         label.text = "하프뷰 타이틀"
         label.textColor = .black
         label.font = .systemFont(ofSize: 15)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -34,14 +43,12 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         textField.autocorrectionType = .no      // 키보드 추천영역 안뜨도록. 2줄을 모두 써주어야 15에서 정상
         textField.spellCheckingType = .no
         textField.becomeFirstResponder()
-        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
     private let textFieldBottomLine: UIView = {
         let view: UIView = .init(frame: .zero)
         view.backgroundColor = .lightGray
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -50,7 +57,6 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         label.text = "0/0"
         label.textColor = .lightGray
         label.font = .systemFont(ofSize: 13)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -58,7 +64,6 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         let button: UIButton = .init(frame: .zero)
         button.setTitle("확인", for: .normal)
         button.backgroundColor = .systemYellow
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -100,32 +105,56 @@ final class HalfViewWithKeyboardViewController: UIViewController {
 
         self.view.backgroundColor = .systemBackground
         
-        view.addSubview(titleLabel)
-        view.addSubview(textField)
-        view.addSubview(textFieldBottomLine)
-        view.addSubview(textLengthLabel)
-        view.addSubview(confirmButton)
+        view.addSubview(scrollView)
         
-        titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 18).isActive = true
-        titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.left.right.bottom.equalToSuperview()
+        }
         
-        textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16.5).isActive = true
-        textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15).isActive = true
-        textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
-        textField.heightAnchor.constraint(equalToConstant: 41).isActive = true
+        scrollView.addSubview(containerView)
         
-        textFieldBottomLine.topAnchor.constraint(equalTo: textField.bottomAnchor).isActive = true
-        textFieldBottomLine.leadingAnchor.constraint(equalTo: textField.leadingAnchor).isActive = true
-        textFieldBottomLine.trailingAnchor.constraint(equalTo: textField.trailingAnchor).isActive = true
-        textFieldBottomLine.heightAnchor.constraint(equalToConstant: 2).isActive = true
+        containerView.snp.makeConstraints { make in
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
+            make.left.equalTo(scrollView.contentLayoutGuide.snp.left)
+            make.right.equalTo(scrollView.contentLayoutGuide.snp.right)
+            make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
+            make.width.equalTo(scrollView.frameLayoutGuide.snp.width)
+        }
         
-        textLengthLabel.topAnchor.constraint(equalTo: textFieldBottomLine.bottomAnchor, constant: 3).isActive = true
-        textLengthLabel.trailingAnchor.constraint(equalTo: textFieldBottomLine.trailingAnchor).isActive = true
+        [titleLabel, textField, textFieldBottomLine, textLengthLabel, confirmButton].forEach {
+            containerView.addSubview($0)
+        }
         
-        confirmButton.topAnchor.constraint(equalTo: textFieldBottomLine.bottomAnchor, constant: 31.5).isActive = true
-        confirmButton.leadingAnchor.constraint(equalTo: textFieldBottomLine.leadingAnchor).isActive = true
-        confirmButton.trailingAnchor.constraint(equalTo: textFieldBottomLine.trailingAnchor).isActive = true
-        confirmButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(18)
+            make.centerX.equalToSuperview()
+        }
+        
+        textField.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(16.5)
+            make.left.equalTo(containerView.safeAreaLayoutGuide.snp.left).offset(15)
+            make.right.equalTo(containerView.safeAreaLayoutGuide.snp.right).offset(-10)
+            make.height.equalTo(41)
+        }
+        
+        textFieldBottomLine.snp.makeConstraints { make in
+            make.top.equalTo(textField.snp.bottom)
+            make.left.right.equalTo(textField)
+            make.height.equalTo(2)
+        }
+
+        textLengthLabel.snp.makeConstraints { make in
+            make.top.equalTo(textFieldBottomLine.snp.bottom).offset(3)
+            make.right.equalTo(textFieldBottomLine)
+        }
+        
+        confirmButton.snp.makeConstraints { make in
+            make.top.equalTo(textFieldBottomLine.snp.bottom).offset(31.5)
+            make.left.right.equalTo(textFieldBottomLine)
+            make.height.equalTo(45)
+            make.bottom.equalTo(containerView)
+        }
         
         addKeyboardObserver()
         
@@ -157,6 +186,25 @@ extension HalfViewWithKeyboardViewController: UITextFieldDelegate {
         }
         return newLength <= maxTitleLength
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if orientation != .portrait {
+            textField.resignFirstResponder()
+        }
+        return true
+        //return orientation == .portrait ? false : true
+    }
+}
+
+extension HalfViewWithKeyboardViewController: UIScrollViewDelegate { }
+
+extension HalfViewWithKeyboardViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+//        if gestureRecognizer is UIPanGestureRecognizer {
+//            return false
+//        }
+        return true
+    }
 }
 
 extension HalfViewWithKeyboardViewController: ModalWithKeyboardPresentable {
@@ -174,6 +222,10 @@ extension HalfViewWithKeyboardViewController: ModalWithKeyboardPresentable {
     
     var heightInLandScape: CGFloat {
         return 198.5
+    }
+    
+    var containerViewOfScrollView: UIView? {
+        return containerView
     }
     
     /*

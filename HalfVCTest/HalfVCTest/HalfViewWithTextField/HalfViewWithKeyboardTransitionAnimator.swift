@@ -79,7 +79,7 @@ final class ModalWithKeyboardPresentationController: UIPresentationController {
         if interfaceOrientation != .portrait {
             //가로모드에서 양옆의 여백을 주고싶으면 여기에 코드를 추가한다.(ex: frame.origin.x = 40)
         }
-        frame.origin.y = containerView.frame.height - frame.size.height
+        frame.origin.y = max(containerView.frame.height - frame.size.height, 47)
         return frame
     }
     
@@ -131,6 +131,7 @@ final class ModalWithKeyboardPresentationController: UIPresentationController {
         if interfaceOrientation == .portrait {
             return CGSize(width: parentSize.width, height: heightInPortrait + additionalHeight)
         } else {
+//            let maxHeight = UIScreen.main.bounds.height - self.presentedViewController.view.safeAreaInsets.bottom
             return CGSize(width: parentSize.width, height: heightInLandScape + additionalHeight)
         }
     }
