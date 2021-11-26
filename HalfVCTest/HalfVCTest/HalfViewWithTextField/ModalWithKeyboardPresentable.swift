@@ -15,6 +15,7 @@ public protocol ModalWithKeyboardPresentable: AnyObject {
     var heightInLandScape: CGFloat { get } // 키보드를 제외한 뷰컨의 높이(가로모드)
     
     var orientation: UIInterfaceOrientation { get }
+    var isKeyboardShowing: Bool { get set }     // 하드웨어 키보드를 사용하는 경우 present시에 키보드가 바로 안 올라오기 때문에 safeArea만큼 뷰컨의 높이를 높이기 위함
     var keyboardHeightOnPortrait: CGFloat { get set }
     var keyboardHeightOnLandscape: CGFloat { get set }
     var keyboardAnimationDuration: Double  { get set }
@@ -83,6 +84,7 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController {
                   let keyboardAnimationDuration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else {
                       return
                   }
+            self.isKeyboardShowing = true
             if self.orientation == .portrait {
                 self.keyboardHeightOnPortrait = keyboardHeight
             } else {

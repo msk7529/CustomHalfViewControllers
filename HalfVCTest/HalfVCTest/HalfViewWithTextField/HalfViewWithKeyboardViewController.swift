@@ -79,6 +79,7 @@ final class HalfViewWithKeyboardViewController: UIViewController {
     var originY: CGFloat = 0
     
     // ModalWithKeyboardPresentable
+    var isKeyboardShowing: Bool = false
     var keyboardHeightOnPortrait: CGFloat = 0
     var keyboardHeightOnLandscape: CGFloat = 0
     var keyboardAnimationDuration: Double = 0.4

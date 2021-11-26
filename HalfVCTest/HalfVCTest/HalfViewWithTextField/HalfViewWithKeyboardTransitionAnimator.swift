@@ -43,6 +43,13 @@ final class ModalWithKeyboardPresentationController: UIPresentationController {
         return .portrait
     }
     
+    private var isKeyboardShowing: Bool {
+        guard let vc = presentedViewController as? (UIViewController & ModalWithKeyboardPresentable) else {
+            return false
+        }
+        return vc.isKeyboardShowing
+    }
+    
     private var keyboardHeight: CGFloat {
         guard let vc = presentedViewController as? (UIViewController & ModalWithKeyboardPresentable) else {
             return 0
@@ -120,10 +127,11 @@ final class ModalWithKeyboardPresentationController: UIPresentationController {
     
     
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
+        let additionalHeight = isKeyboardShowing ? keyboardHeight : presentedViewController.view.safeAreaInsets.bottom
         if interfaceOrientation == .portrait {
-            return CGSize(width: parentSize.width, height: heightInPortrait + keyboardHeight)
+            return CGSize(width: parentSize.width, height: heightInPortrait + additionalHeight)
         } else {
-            return CGSize(width: parentSize.width, height: heightInLandScape + keyboardHeight)
+            return CGSize(width: parentSize.width, height: heightInLandScape + additionalHeight)
         }
     }
     
