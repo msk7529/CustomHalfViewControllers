@@ -31,6 +31,8 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         textField.enablesReturnKeyAutomatically = true
         textField.returnKeyType = .done
         textField.clearButtonMode = .whileEditing
+        textField.autocorrectionType = .no      // 키보드 추천영역 안뜨도록. 2줄을 모두 써주어야 15에서 정상
+        textField.spellCheckingType = .no
         textField.becomeFirstResponder()
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -50,6 +52,14 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         label.font = .systemFont(ofSize: 13)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    private let confirmButton: UIButton = {
+        let button: UIButton = .init(frame: .zero)
+        button.setTitle("확인", for: .normal)
+        button.backgroundColor = .systemYellow
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -73,6 +83,8 @@ final class HalfViewWithKeyboardViewController: UIViewController {
     var keyboardHeightOnLandscape: CGFloat = 0
     var keyboardAnimationDuration: Double = 0.4
     var keyboardObserver: NSObjectProtocol?
+    var keyboardObserver2: NSObjectProtocol?
+
     
     var cancellables: Set<AnyCancellable> = .init()
     
@@ -91,6 +103,7 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         view.addSubview(textField)
         view.addSubview(textFieldBottomLine)
         view.addSubview(textLengthLabel)
+        view.addSubview(confirmButton)
         
         titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 18).isActive = true
         titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -107,6 +120,11 @@ final class HalfViewWithKeyboardViewController: UIViewController {
         
         textLengthLabel.topAnchor.constraint(equalTo: textFieldBottomLine.bottomAnchor, constant: 3).isActive = true
         textLengthLabel.trailingAnchor.constraint(equalTo: textFieldBottomLine.trailingAnchor).isActive = true
+        
+        confirmButton.topAnchor.constraint(equalTo: textFieldBottomLine.bottomAnchor, constant: 31.5).isActive = true
+        confirmButton.leadingAnchor.constraint(equalTo: textFieldBottomLine.leadingAnchor).isActive = true
+        confirmButton.trailingAnchor.constraint(equalTo: textFieldBottomLine.trailingAnchor).isActive = true
+        confirmButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
         
         addKeyboardObserver()
         

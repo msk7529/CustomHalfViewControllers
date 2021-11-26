@@ -20,6 +20,7 @@ public protocol ModalWithKeyboardPresentable: AnyObject {
     var keyboardAnimationDuration: Double  { get set }
     //var cancellables: Set<AnyCancellable> { get set }
     var keyboardObserver: NSObjectProtocol? { get set }
+    var keyboardObserver2: NSObjectProtocol? { get set }
     
     func addKeyboardObserver()      // viewDidLaod에서 텍스트필드 또는 텍스트뷰 becomeFirstResponder 호출후, 호출해주어야 한다.
     func removeKeyboardObserver()   // 옵저버 제거
@@ -75,6 +76,7 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController {
 //    }
     
     func addKeyboardObserver() {
+        // 반드시 show, change 두 개의 옵저버를 등록해야 한다. change는 키보드 위에 나타나는 QuickType Bar가 나타났을때 높이를 재조정하기 위함.
         keyboardObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main, using: { [weak self] noti in
             guard let `self` = self, let userInfo = noti.userInfo,
                   let keyboardHeight = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height,
@@ -88,11 +90,19 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController {
             }
             self.keyboardAnimationDuration = keyboardAnimationDuration
         })
+        
+        keyboardObserver2 = NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidChangeFrameNotification, object: nil, queue: .main, using: { [weak self] _ in
+            self?.presentationController?.containerViewWillLayoutSubviews()
+        })
     }
     
     func removeKeyboardObserver() {
-        guard let observer = keyboardObserver else { return }
-        NotificationCenter.default.removeObserver(observer)
+        if let keyboardObserver = keyboardObserver {
+            NotificationCenter.default.removeObserver(keyboardObserver)
+        }
+        if let keyboardObserver2 = keyboardObserver2 {
+            NotificationCenter.default.removeObserver(keyboardObserver2)
+        }
     }
     
     func addPanGesture() {
