@@ -35,7 +35,7 @@ public protocol ModalWithKeyboardPresentable: AnyObject {
     func addPanGesture()                            // 팬제스처 지원을 하고자 한다면 viewDidLoad에서 호출한다.
 }
 
-public extension ModalWithKeyboardPresentable where Self: UIViewController, Self: UIGestureRecognizerDelegate {
+public extension ModalWithKeyboardPresentable where Self: UIViewController {
     var orientation: UIInterfaceOrientation  {
         if let orientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation {
             return orientation
@@ -99,7 +99,7 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController, Self
         })
         
         keyboardObserver2 = NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidChangeFrameNotification, object: nil, queue: .main, using: { [weak self] _ in
-            self?.presentationController?.containerViewWillLayoutSubviews()
+            self?.presentationController?.containerViewDidLayoutSubviews()  // willLayoutSubviews는 팬제스처시에 모달이 튀는 현상이 있음
         })
     }
     
@@ -115,7 +115,6 @@ public extension ModalWithKeyboardPresentable where Self: UIViewController, Self
     func addPanGesture() {
         if isPanGestureEnable {
             let recognizer = UIPanGestureRecognizer(target: self, action: #selector(didPanGesture(_:)))
-            recognizer.delegate = self
             view.addGestureRecognizer(recognizer)
         }
     }
@@ -137,6 +136,7 @@ public extension UIViewController {
         }
         
         let viewTranslation = sender.translation(in: view)
+        let velocity = sender.velocity(in: view)
  
         switch sender.state {
         case .began:

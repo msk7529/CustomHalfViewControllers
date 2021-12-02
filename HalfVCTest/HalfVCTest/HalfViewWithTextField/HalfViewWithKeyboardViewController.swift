@@ -17,7 +17,7 @@ final class HalfViewWithKeyboardViewController: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView: UIScrollView = .init(frame: .zero)
-        scrollView.bounces = true
+        scrollView.bounces = false
         scrollView.delegate = self
         return scrollView
     }()
@@ -105,10 +105,17 @@ final class HalfViewWithKeyboardViewController: UIViewController {
 
         self.view.backgroundColor = .systemBackground
         
+        view.addSubview(titleLabel)
+        
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(18)
+            make.centerX.equalToSuperview()
+        }
+        
         view.addSubview(scrollView)
         
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(titleLabel.snp.bottom)
             make.left.right.bottom.equalToSuperview()
         }
         
@@ -122,17 +129,12 @@ final class HalfViewWithKeyboardViewController: UIViewController {
             make.width.equalTo(scrollView.frameLayoutGuide.snp.width)
         }
         
-        [titleLabel, textField, textFieldBottomLine, textLengthLabel, confirmButton].forEach {
+        [textField, textFieldBottomLine, textLengthLabel, confirmButton].forEach {
             containerView.addSubview($0)
         }
         
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(18)
-            make.centerX.equalToSuperview()
-        }
-        
         textField.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(16.5)
+            make.top.equalTo(containerView.snp.top).offset(16.5)
             make.left.equalTo(containerView.safeAreaLayoutGuide.snp.left).offset(15)
             make.right.equalTo(containerView.safeAreaLayoutGuide.snp.right).offset(-10)
             make.height.equalTo(41)
@@ -197,15 +199,6 @@ extension HalfViewWithKeyboardViewController: UITextFieldDelegate {
 }
 
 extension HalfViewWithKeyboardViewController: UIScrollViewDelegate { }
-
-extension HalfViewWithKeyboardViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        if gestureRecognizer is UIPanGestureRecognizer {
-//            return false
-//        }
-        return true
-    }
-}
 
 extension HalfViewWithKeyboardViewController: ModalWithKeyboardPresentable {
     var isPanGestureEnable: Bool {
